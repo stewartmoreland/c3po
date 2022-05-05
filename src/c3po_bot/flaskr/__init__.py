@@ -47,11 +47,7 @@ def create_app(config_object):
         Returns:
             Response: Empty string and status code of 200
         """
-        return 'up'
-
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
+        return 'up', 200
 
     return app
 

@@ -9,7 +9,6 @@ from flask import Flask
 from flask.json import JSONEncoder
 
 from c3po_api.routes.root import v1_root
-from c3po_api.routes.slack import v1_slack, v1_user_import
 
 
 def create_app(config_object):
@@ -39,8 +38,6 @@ def create_app(config_object):
 
     # Register api blueprints
     app.register_blueprint(v1_root)
-    app.register_blueprint(v1_slack)
-    app.register_blueprint(v1_user_import)
 
     # Register global exception handler
     # AppExceptionHandler(app=app)
@@ -52,7 +49,7 @@ def create_app(config_object):
         Returns:
             Response: Empty string and status code of 200
         """
-        return 'up'
+        return 'up', 200
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):
