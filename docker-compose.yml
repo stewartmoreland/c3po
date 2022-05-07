@@ -12,7 +12,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 8443:8443
+      - 1443:8443
     depends_on:
       - 'db'
 
@@ -28,7 +28,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 4438:8443
+      - 2443:8443
 
 
   db:

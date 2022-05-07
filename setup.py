@@ -29,8 +29,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'c3po-api = c3po_api.main:main',
-            'c3po-bot = c3po_bot.main:main'
+            'c3po_api = c3po_api.main:main',
+            'c3po_bot = c3po_bot.main:main'
         ]
     }
 )
