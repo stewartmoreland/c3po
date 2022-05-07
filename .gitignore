@@ -25,6 +25,7 @@ MANIFEST
 .pytest_cache
 
 build/
+data/
 
 # Environments
 *.env

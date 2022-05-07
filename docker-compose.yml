@@ -5,7 +5,7 @@ services:
     container_name: c3po-api
     working_dir: /app
     env_file: secrets.env
-    command: [ "c3po_api.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
+    command: [ "src.c3po_api.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
     environment:
       FLASK_APP: ./c3po_api/main.py
       DATABASE_URL: postgresql://postgres:postgres@db/postgres
@@ -22,7 +22,7 @@ services:
     container_name: c3po-bot
     working_dir: /app
     env_file: secrets.env
-    command: [ "c3po_bot.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
+    command: [ "src.c3po_bot.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
     environment:
       FLASK_APP: ./c3po_bot/main.py
     volumes:

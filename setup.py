@@ -4,9 +4,10 @@ from setuptools import find_packages, setup
 setup(
     name='c3po',
     version='0.1.0',
-    description="Human > cyborg relations",
+    description="Human cyborg relations. How might I serve you?",
     url='https://github.com/stewartmoreland/c3po',
     package_dir={"": "src"},
+    packages=find_packages(where="src", include=["c3po_*"]),
     include_package_data=True,
     python_requires='>=3',
     install_requires=[
@@ -29,8 +30,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'c3po_api = c3po_api.main:main',
-            'c3po_bot = c3po_bot.main:main'
+            'c3po-api = c3po_api.main:main',
+            'c3po-bot = c3po_bot.main:main'
         ]
     }
 )
