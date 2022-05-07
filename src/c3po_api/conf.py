@@ -10,8 +10,9 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    """ Base Flask configuration object. Base should always
-    assume to be Production.
+    """ 
+    Base Flask configuration object. 
+    Note: Base should always assume to be Production.
     """
     SESSION_COOKIE_SECURE = True
     DEBUG = False
@@ -23,19 +24,18 @@ class Config(object):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SLACK_TOKEN = os.environ.get('SLACK_TOKEN')
-    SLACK_SIGNING_SECRET = os.environ.get('SLACK_SIGNING_SECRET')
-    REWARD_EMOJI = os.environ.get('REWARD_EMOJI') or ":taco:"
 
 
 class ProductionConfig(Config):
-    """ Producation config object
+    """ 
+    Production configuration object.
     """
     PORT = os.environ.get('PORT') or '5000'
 
 
 class DevelopmentConfig(Config):
-    """ Development config object
+    """
+    Development configuration object.
     """
     DEBUG = True
 
@@ -55,5 +55,3 @@ config = {
     'PRODUCTION': ProductionConfig,
     'default': LocalConfig
 }
-""" dict: For string key to object config mapping
-"""

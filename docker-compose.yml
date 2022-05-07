@@ -1,19 +1,35 @@
 version: '3'
 services:
-  app:
+  api:
     build: .
-    container_name: bb8
+    container_name: c3po-api
     working_dir: /app
     env_file: secrets.env
+    command: [ "c3po_api.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
     environment:
-      FLASK_APP: ./c3po/main.py
+      FLASK_APP: ./c3po_api/main.py
       DATABASE_URL: postgresql://postgres:postgres@db/postgres
     volumes:
       - ./:/app
     ports:
-      - 8000:8000
+      - 8443:8443
     depends_on:
       - 'db'
+
+
+  bot:
+    build: .
+    container_name: c3po-bot
+    working_dir: /app
+    env_file: secrets.env
+    command: [ "c3po_bot.main:main()", "--certfile=./secrets/cert.pem", "-b 0.0.0.0:8443" ]
+    environment:
+      FLASK_APP: ./c3po_bot/main.py
+    volumes:
+      - ./:/app
+    ports:
+      - 4438:8443
+
 
   db:
     image: postgres:12-alpine

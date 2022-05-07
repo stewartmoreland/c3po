@@ -4,44 +4,42 @@
 This module is used to provide environment-based configuration objects
 for the flask application context on start up.
 """
-import os
-import json
+import os, json, secrets
+from random import random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    """ Base Flask configuration object. Base should always
-    assume to be Production.
+    """
+    Base Flask configuration class.
+    Note: Base should always assume to be Production.
     """
     SESSION_COOKIE_SECURE = True
     DEBUG = False
     TESTING = False
-    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
-    
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    if SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
-        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://", 1)
+    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or secrets.token_urlsafe(16)
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SLACK_TOKEN = os.environ.get('SLACK_TOKEN')
-    SLACK_SIGNING_SECRET = os.environ.get('SLACK_SIGNING_SECRET')
-    REWARD_EMOJI = os.environ.get('REWARD_EMOJI') or ":taco:"
+    SLACK_CLIENT_ID = os.environ.get('SLACK_CLIENT_ID')
+    SLACK_CLIENT_SECRET = os.environ.get('SLACK_CLIENT_SECRET')
 
 
 class ProductionConfig(Config):
-    """ Producation config object
+    """
+    Production configuration object.
     """
     PORT = os.environ.get('PORT') or '5000'
 
 
 class DevelopmentConfig(Config):
-    """ Development config object
+    """
+    Development configuration object.
     """
     DEBUG = True
 
 
 class LocalConfig(Config):
-    """ Local configuration object for local development.
+    """
+    Local configuration object for local development.
     """
     DEBUG = True
     PORT = 5000
@@ -55,5 +53,3 @@ config = {
     'PRODUCTION': ProductionConfig,
     'default': LocalConfig
 }
-""" dict: For string key to object config mapping
-"""

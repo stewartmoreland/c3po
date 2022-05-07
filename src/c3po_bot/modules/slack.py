@@ -11,7 +11,6 @@ from urllib.parse import urlencode
 from urllib.error import URLError, HTTPError
 
 from flask import current_app as app
-from c3po_bot.modules import scoring
 
 
 logger = logging.getLogger()
@@ -24,7 +23,7 @@ class SlackApi(object):
         self._headers = {}
         self._headers["Authorization"] = "Bearer {}".format(token)
 
-    def getAllUsers(self):
+    def get_all_users(self):
         members = list()
         endpoint = 'https://slack.com/api/users.list'
         variables = urlencode({'limit':'1000'})
@@ -32,7 +31,6 @@ class SlackApi(object):
         page_count = 1
         
         while True:
-            nodes = list()
             request = Request(endpoint, headers=self._headers, data=variables)
             with urlopen(request) as response:
                 data = json.loads(response.read().decode('utf8'))
@@ -51,7 +49,7 @@ class SlackApi(object):
 
         return members
 
-    def getCurrentBotInfo(self):
+    def get_current_bot_info(self):
         endpoint = 'https://slack.com/api/auth.test'
         self._headers["Content-Type"] = "application/x-www-form-urlencoded"
         request = Request(endpoint, headers=self._headers)
@@ -59,7 +57,7 @@ class SlackApi(object):
             data = json.loads(response.read().decode('utf8'))
         return data
 
-    def getBotInfo(self, bot_id):
+    def get_bot_info(self, bot_id):
         endpoint = 'https://slack.com/api/bots.info'
         endpoint = endpoint + '?bot={}'.format(bot_id)
         self._headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -68,7 +66,7 @@ class SlackApi(object):
             data = json.loads(response.read().decode('utf8'))
         return data
 
-    def getUserInfo(self, user_id):
+    def get_user_info(self, user_id):
         endpoint = 'https://slack.com/api/users.info'
         variables = urlencode({'user':user_id})
         variables = variables.encode('ascii')
@@ -80,7 +78,7 @@ class SlackApi(object):
         
         return user_data
 
-    def getConversationInfo(self, user_id):
+    def get_conversation_info(self, user_id):
         endpoint = 'https://slack.com/api/users.conversations'
         variables = urlencode({'user':user_id,'types':'im,mpim'})
         variables = variables.encode('ascii')
@@ -100,7 +98,7 @@ class SlackApi(object):
 
         return convo_data
 
-    def getChannelIdByName(self, channel_name):
+    def get_channel_id_by_name(self, channel_name):
         endpoint = 'https://slack.com/api/conversations.list'
         variables = urlencode({'types':'public_channel,private_channel'})
         variables = variables.encode('ascii')
@@ -127,7 +125,7 @@ class SlackApi(object):
         except:
             app.logger.error(f'Unable to find channel {channel_name}. If this is a private channel, try adding the bot user to the channel to make it visible.')
 
-    def getChannelList(self):
+    def get_channel_list(self):
         endpoint = 'https://slack.com/api/conversations.list'
         variables = urlencode({'types':'public_channel,private_channel'})
         variables = variables.encode('ascii')
@@ -147,7 +145,7 @@ class SlackApi(object):
 
         return channel_list
 
-    def openDirectMessage(self, user_ids):
+    def open_direct_message(self, user_ids):
         endpoint = 'https://slack.com/api/conversations.open'
         variables = urlencode({'users':user_ids})
         variables = variables.encode('ascii')
@@ -177,7 +175,7 @@ class SlackApi(object):
 
         return data
     
-    def sendMessage(self, message):
+    def send_message(self, message):
         endpoint = 'https://slack.com/api/chat.postMessage'
         variables = urlencode(message)
         variables = variables.encode('ascii')
@@ -193,7 +191,6 @@ class SlackEventHandler(object):
         self._api = SlackApi(app.config['SLACK_TOKEN'])
 
     def mention_parser(self, request):
-        slack_ids = list()
         bot_id = self._api.getCurrentBotInfo()
         bot_info = self._api.getBotInfo(bot_id=bot_id['bot_id'])
         app.logger.debug(json.dumps(bot_info))
@@ -223,18 +220,4 @@ class SlackEventHandler(object):
 
             message['text'] = "Oops. Something went wrong."
             return message
-
-
-    def message_parser(self, request=None):
-        if app.config['REWARD_EMOJI'] in request['event']['text']:
-            slack_api = SlackApi(app.config['SLACK_TOKEN'])
-            regex = '<@.{6,16}>'
-            slack_ids = re.findall(regex, str(request['event']['text']))
-            for slack_id in slack_ids:
-                scoring.add_point_to_user(recipient_id=slack_id, sender_id=request['event']['user'])
-                
-            slack_api.add_reaction(message=request, reaction='taco')
-            response = self._api.add_reaction(request)
-
-            return response
 
