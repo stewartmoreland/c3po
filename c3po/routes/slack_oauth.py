@@ -1,19 +1,14 @@
+from cmath import log
 import os
 
 from flask import current_app as app
 from flask import Blueprint, make_response, request, redirect, render_template
 
 from slack_sdk.oauth import AuthorizeUrlGenerator
-from slack_sdk.oauth.installation_store import FileInstallationStore, Installation
-from slack_sdk.oauth.state_store import FileOAuthStateStore
+from slack_sdk.oauth.installation_store import Installation
 
 from slack_sdk.web import WebClient
 
-
-# Issue and consume state parameter value on the server-side.
-state_store = FileOAuthStateStore(expiration_seconds=300, base_dir="./data")
-# Persist installation data and lookup it by IDs.
-installation_store = FileInstallationStore(base_dir="./data")
 
 # Build https://slack.com/oauth/v2/authorize with sufficient query parameters
 authorize_url_generator = AuthorizeUrlGenerator(
@@ -22,16 +17,21 @@ authorize_url_generator = AuthorizeUrlGenerator(
     user_scopes=["search:read"],
 )
 
-v1_slack_oauth = Blueprint("v1_slack_oauth", __name__, url_prefix="/v1/slack/oauth")
+v1_slack_oauth = Blueprint("v1_slack_oauth", __name__,
+                           url_prefix="/v1/slack/oauth")
 
 
 @v1_slack_oauth.route("/authorize", methods=["GET"])
 def authorize():
+    from c3po.database import state_store
     state = state_store.issue()
     return redirect(authorize_url_generator.generate(state))
 
+
 @v1_slack_oauth.route("/callback", methods=["GET"])
 def oauth_callback():
+    from c3po.database import state_store, installation_store
+
     client_secret = app.config["SLACK_CLIENT_SECRET"]
     # Retrieve the auth code and state from the request params
     if "code" in request.args:
@@ -72,14 +72,16 @@ def oauth_callback():
                 bot_token=bot_token,
                 bot_id=bot_id,
                 bot_user_id=oauth_response.get("bot_user_id"),
-                bot_scopes=oauth_response.get("scope"),  # comma-separated string
+                bot_scopes=oauth_response.get(
+                    "scope"),  # comma-separated string
                 user_id=installer.get("id"),
                 user_token=installer.get("access_token"),
                 user_scopes=installer.get("scope"),  # comma-separated string
                 incoming_webhook_url=incoming_webhook.get("url"),
                 incoming_webhook_channel=incoming_webhook.get("channel"),
                 incoming_webhook_channel_id=incoming_webhook.get("channel_id"),
-                incoming_webhook_configuration_url=incoming_webhook.get("configuration_url"),
+                incoming_webhook_configuration_url=incoming_webhook.get(
+                    "configuration_url"),
                 is_enterprise_install=is_enterprise_install,
                 token_type=oauth_response.get("token_type"),
             )

@@ -7,3 +7,4 @@ name = "pypi"
 c3po = {editable = true, path = "."}
 
 [dev-packages]
+autopep8 = "*"
