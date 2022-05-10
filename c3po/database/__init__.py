@@ -13,7 +13,7 @@ db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
 
-installation_store = SQLAlchemyInstallationStore(client=app.config['SLACK_CLIENT_ID'], engine=db_session.bind, logger=app.logger)
+installation_store = SQLAlchemyInstallationStore(client_id=app.config['SLACK_CLIENT_ID'], engine=db_session.bind, logger=app.logger)
 state_store = SQLAlchemyOAuthStateStore(expiration_seconds=300, engine=db_session.bind, logger=app.logger)
 
 Base = declarative_base()
