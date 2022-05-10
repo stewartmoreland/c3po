@@ -5,8 +5,8 @@ import json
 import flask
 from flask import current_app as app, request, Response
 
-from c3po_bot.modules.slack import SlackApi, SlackEventHandler
-from c3po_bot.modules.helpers import verify_slack_signature
+from c3po.modules.slack import SlackApi, SlackEventHandler
+from c3po.modules.helpers import verify_slack_signature
 
 
 v1_slack = flask.Blueprint('v1_slack', __name__, url_prefix='/api/v1')

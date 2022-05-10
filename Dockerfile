@@ -11,4 +11,4 @@ WORKDIR /app
 RUN pip install --no-cache-dir --editable .
 
 ENTRYPOINT [ "gunicorn" ]
-CMD [ "c3po_api.main:main()", "--workers 2", "--threads 2", "-b 0.0.0.0:8000" ]
+CMD [ "c3po.main:main()", "--workers 2", "--threads 2", "-b 0.0.0.0:8000" ]

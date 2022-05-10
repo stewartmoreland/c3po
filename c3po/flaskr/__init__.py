@@ -8,7 +8,7 @@ configuration and register handlers.
 from flask import Flask
 from flask.json import JSONEncoder
 
-from c3po.routes.root import v1_root
+from c3po.routes import v1_root, v1_slack, v1_slack_oauth
 
 
 def create_app(config_object):
@@ -38,6 +38,8 @@ def create_app(config_object):
 
     # Register api blueprints
     app.register_blueprint(v1_root)
+    app.register_blueprint(v1_slack)
+    app.register_blueprint(v1_slack_oauth)
 
     # Register global exception handler
     # AppExceptionHandler(app=app)

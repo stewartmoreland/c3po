@@ -34,6 +34,10 @@ def oauth_start():
     return f'<a href="{url}">' \
            f'<img alt=""Add to Slack"" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>'
 
+@v1_slack_oauth.route("/authorize", methods=["GET"])
+def authorize():
+    state = state_store.issue()
+    return authorize_url_generator.generate(state)
 
 @v1_slack_oauth.route("/oauth/callback", methods=["GET"])
 def oauth_callback():
