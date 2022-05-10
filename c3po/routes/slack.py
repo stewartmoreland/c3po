@@ -22,8 +22,6 @@ def event_api_handler():
     slack_signature = request.headers['X-Slack-Signature']
     slack_request_timestamp = request.headers['X-Slack-Request-Timestamp']
 
-    slack_event = SlackEventHandler()
-
     if not verify_slack_signature(slack_signature=slack_signature, slack_request_timestamp=slack_request_timestamp):
         app.logger.info("Bad request")
         return Response(status=400)
@@ -51,8 +49,8 @@ def event_api_handler():
             app.logger.error(f"Error getting bot token: {e}")
             return make_response(f"Error getting bot token: {e}", 200)
 
-        slack_api = SlackApi(token=bot_token)
+        slack_event = SlackEventHandler(token=bot_token)
         message = slack_event.mention_parser(request=data)
-        status = slack_api.sendMessage(message)
+        status = slack_event.send_message(message)
 
         return Response(status, mimetype='application/json'), 200

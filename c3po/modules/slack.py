@@ -189,9 +189,12 @@ class SlackApi(object):
         return data
 
 class SlackEventHandler(object):
-    def __init__(self):
-        self._api = SlackApi(app.config['SLACK_TOKEN'])
+    def __init__(self, token):
+        self._api = SlackApi(token)
         self.quotes = get_star_wars_quote()
+
+    def send_message(self, message):
+        self._api.send_message(message)
 
     def mention_parser(self, request):
         bot_id = self._api.getCurrentBotInfo()
