@@ -1,7 +1,7 @@
 import os
 
 from flask import current_app as app
-from flask import Blueprint, make_response, request
+from flask import Blueprint, make_response, request, redirect
 
 from slack_sdk.oauth import AuthorizeUrlGenerator
 from slack_sdk.oauth.installation_store import FileInstallationStore, Installation
@@ -25,19 +25,10 @@ authorize_url_generator = AuthorizeUrlGenerator(
 v1_slack_oauth = Blueprint("v1_slack_oauth", __name__, url_prefix="/v1/slack")
 
 
-@v1_slack_oauth.route("/install", methods=["GET"])
-def oauth_start():
-    # Generate a random value and store it on the server-side
-    state = state_store.issue()
-    # https://slack.com/oauth/v2/authorize?state=(generated value)&client_id={client_id}&scope=app_mentions:read,chat:write&user_scope=search:read
-    url = authorize_url_generator.generate(state)
-    return f'<a href="{url}">' \
-           f'<img alt=""Add to Slack"" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>'
-
 @v1_slack_oauth.route("/authorize", methods=["GET"])
 def authorize():
     state = state_store.issue()
-    return authorize_url_generator.generate(state)
+    return redirect(authorize_url_generator.generate(state))
 
 @v1_slack_oauth.route("/oauth/callback", methods=["GET"])
 def oauth_callback():
