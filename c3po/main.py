@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
 
-from c3po_api.flaskr import create_app
-from c3po_api.conf import config
+from c3po.flaskr import create_app
+from c3po.conf import config
 
 def main():
     environment_name = os.environ.get('ENVIRONMENT', 'default')

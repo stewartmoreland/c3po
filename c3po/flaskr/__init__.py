@@ -8,7 +8,7 @@ configuration and register handlers.
 from flask import Flask
 from flask.json import JSONEncoder
 
-from c3po_api.routes.root import v1_root
+from c3po.routes.root import v1_root
 
 
 def create_app(config_object):
@@ -33,7 +33,7 @@ def create_app(config_object):
 
     # Init database
     with app.app_context():
-        from c3po_api.database import db_session, init_db
+        from c3po.database import db_session, init_db
         init_db()
 
     # Register api blueprints

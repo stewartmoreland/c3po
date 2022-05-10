@@ -6,9 +6,8 @@ setup(
     version='0.1.0',
     description="Human cyborg relations. How might I serve you?",
     url='https://github.com/stewartmoreland/c3po',
-    package_dir={"": "src"},
-    packages=find_packages(where="src", include=["c3po_*"]),
     include_package_data=True,
+    packages=find_packages(),
     python_requires='>=3',
     install_requires=[
         'flask~=2.1.2',
@@ -30,8 +29,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'c3po-api = c3po_api.main:main',
-            'c3po-bot = c3po_bot.main:main'
+            'c3po = c3po.main:main',
         ]
     }
 )

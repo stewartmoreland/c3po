@@ -1,1 +1,0 @@
-web: gunicorn "src.c3po_bot.main:main()"

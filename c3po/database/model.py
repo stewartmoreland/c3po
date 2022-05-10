@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 from sqlalchemy import Column, Integer, String, ForeignKey
-from c3po_api.database import Base
+from c3po.database import Base
 
 
 class User(Base):

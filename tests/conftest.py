@@ -1,8 +1,8 @@
 from pytest import fixture
 from mock import patch
 
-from c3po_api.flaskr import create_app
-from c3po_api.conf import Config
+from c3po.flaskr import create_app
+from c3po.conf import Config
 
 
 class TestingConfig(Config):
