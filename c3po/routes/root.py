@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import flask
+from flask import Blueprint, render_template
 
-v1_root = flask.Blueprint('home', __name__)
+v1_root = Blueprint('home', __name__)
 
 @v1_root.route('/', methods=['GET'])
 def landing_page():
-    return flask.render_template('home.html')
+    return render_template('home.html')

@@ -1,7 +1,7 @@
 import os
 
 from flask import current_app as app
-from flask import Blueprint, make_response, request, redirect
+from flask import Blueprint, make_response, request, redirect, render_template
 
 from slack_sdk.oauth import AuthorizeUrlGenerator
 from slack_sdk.oauth.installation_store import FileInstallationStore, Installation
@@ -46,7 +46,7 @@ def oauth_callback():
                 code=request.args["code"]
             )
 
-            installed_enterprise = oauth_response.get("enterprise", {})
+            # installed_enterprise = oauth_response.get("enterprise", {})
             is_enterprise_install = oauth_response.get("is_enterprise_install")
             installed_team = oauth_response.get("team", {})
             installer = oauth_response.get("authed_user", {})
@@ -55,18 +55,18 @@ def oauth_callback():
             bot_token = oauth_response.get("access_token")
             # NOTE: oauth.v2.access doesn't include bot_id in response
             bot_id = None
-            enterprise_url = None
+            # enterprise_url = None
             if bot_token is not None:
                 auth_test = client.auth_test(token=bot_token)
                 bot_id = auth_test["bot_id"]
-                if is_enterprise_install is True:
-                    enterprise_url = auth_test.get("url")
+                # if is_enterprise_install is True:
+                #     enterprise_url = auth_test.get("url")
 
             installation = Installation(
                 app_id=oauth_response.get("app_id"),
-                enterprise_id=installed_enterprise.get("id"),
-                enterprise_name=installed_enterprise.get("name"),
-                enterprise_url=enterprise_url,
+                # enterprise_id=installed_enterprise.get("id"),
+                # enterprise_name=installed_enterprise.get("name"),
+                # enterprise_url=enterprise_url,
                 team_id=installed_team.get("id"),
                 team_name=installed_team.get("name"),
                 bot_token=bot_token,
@@ -87,9 +87,9 @@ def oauth_callback():
             # Store the installation
             installation_store.save(installation)
 
-            return "Thanks for installing this app!"
+            return render_template('install_result.html', template_header="SUCCESS!", template_body="Thanks for installing this app!"), 200
         else:
-            return make_response(f"Try the installation again (the state value is already expired)", 400)
+            return render_template('install_result.html', template_header="R2D2, you know better than to trust a strange computer!", template_body="Try the installation again (the state value is already expired)"), 400
 
     error = request.args["error"] if "error" in request.args else ""
-    return make_response(f"Something is wrong with the installation (error: {error})", 400)
+    return render_template('install_result.html', template_header="Wait. Oh my! What have you done...I am backwards you filthy furball.", template_body=f"Something is wrong with the installation (error: {error})"), 400

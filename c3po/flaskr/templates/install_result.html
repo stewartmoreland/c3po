@@ -1,0 +1,36 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>C-3PO</title>
+  <meta name="description" content="Hello C-3PO">
+  <meta name="author" content="Stewart Moreland">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
+  <script src="https://kit.fontawesome.com/7104333187.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="wrapper fadeInDown">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='img/logo-wht.png') }}" width="75%">
+    </div>
+    <div id="formContent">
+      <!-- Tabs Titles -->
+      <h2 class="active"> {{ header }} </h2>
+      <p class="active"> {{ body }} </p>
+
+      <div id="formFooter">
+        <a class="underlineHover" href="https://github.com/stewartmoreland/c3po">
+          <i class="fa-brands fa-github fa-xl"></i>
+          Check out C-3PO on GitHub &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
