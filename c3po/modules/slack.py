@@ -12,6 +12,8 @@ from urllib.error import URLError, HTTPError
 
 from flask import current_app as app
 
+from c3po.modules.quotes import get_star_wars_quote
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -189,6 +191,7 @@ class SlackApi(object):
 class SlackEventHandler(object):
     def __init__(self):
         self._api = SlackApi(app.config['SLACK_TOKEN'])
+        self.quotes = get_star_wars_quote()
 
     def mention_parser(self, request):
         bot_id = self._api.getCurrentBotInfo()
@@ -200,12 +203,12 @@ class SlackEventHandler(object):
             if 'help me' in request['event']['text']:
                 app.logger.info('Help me requested')
                 help_message = [
-                    f"Reward your teammates by @ mentioning them and using the {app.config['REWARD_EMOJI']}",
-                    f"Check your {app.config['REWARD_EMOJI']} score by using `@{bot_info['bot']['name']} my score`",
-                    f"Check someone else's {app.config['REWARD_EMOJI']} score by using `@{bot_info['bot']['name']} @friendsname user score`",
-                    f"Check the top 10 leaderboard with `@{bot_info['bot']['name']} leaderboard`"
+                    f"@{bot_info['name']} quotes: Get random Star Wars quotes."
                 ]
                 message['text'] = "\n".join(help_message)
+            elif 'quotes' in request['event']['text']:
+                app.logger.info('Quotes requested')
+                message['text'] = f"> {self.quotes['content']}"
 
             else:
                 message['text'] = f"Good heavens. I didn't understand what you said.\n\nFor help, type `@{bot_info['bot']['name']} help me`"

@@ -22,7 +22,7 @@ authorize_url_generator = AuthorizeUrlGenerator(
     user_scopes=["search:read"],
 )
 
-v1_slack_oauth = Blueprint("v1_slack_oauth", __name__, url_prefix="/v1/slack")
+v1_slack_oauth = Blueprint("v1_slack_oauth", __name__, url_prefix="/v1/slack/oauth")
 
 
 @v1_slack_oauth.route("/authorize", methods=["GET"])
@@ -30,7 +30,7 @@ def authorize():
     state = state_store.issue()
     return redirect(authorize_url_generator.generate(state))
 
-@v1_slack_oauth.route("/oauth/callback", methods=["GET"])
+@v1_slack_oauth.route("/callback", methods=["GET"])
 def oauth_callback():
     client_secret = app.config["SLACK_CLIENT_SECRET"]
     # Retrieve the auth code and state from the request params
@@ -87,7 +87,7 @@ def oauth_callback():
             # Store the installation
             installation_store.save(installation)
 
-            return render_template('install_result.html', template_header="SUCCESS!", template_body="Thanks for installing this app!"), 200
+            return render_template('install_result.html', template_header="SUCCESS!", template_body="Hello. I don’t believe we have been introduced. A pleasure to meet you. I am C-3PO, Human-Cyborg Relations."), 200
         else:
             return render_template('install_result.html', template_header="R2D2, you know better than to trust a strange computer!", template_body="Try the installation again (the state value is already expired)"), 400
 

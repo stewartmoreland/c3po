@@ -9,9 +9,9 @@ from c3po.modules.slack import SlackApi, SlackEventHandler
 from c3po.modules.helpers import verify_slack_signature
 
 
-v1_slack = flask.Blueprint('v1_slack', __name__, url_prefix='/api/v1')
+v1_slack = flask.Blueprint('v1_slack', __name__, url_prefix='/v1/slack')
 
-@v1_slack.route('/slack/events', methods=['POST'])
+@v1_slack.route('/events', methods=['POST'])
 def event_api_handler():
     data = request.json
     slack_api = SlackApi(app.config['SLACK_TOKEN'])
