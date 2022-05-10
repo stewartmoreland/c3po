@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import email
 from sqlalchemy import Column, Integer, String, ForeignKey
 from c3po.database import Base
 
@@ -6,10 +7,12 @@ from c3po.database import Base
 class User(Base):
     __tablename__ = 'users'
 
-    slack_id = Column(String(16), primary_key=True)
+    id = Column(String(16), primary_key=True)
     user_name = Column(String(64))
-    slack_subscription = Column(String(32))
     full_name = Column(String(64), nullable=True)
+    email = Column(String(64), nullable=True)
+    slack_user_id = Column(String(16), nullable=True)
+    slack_subscription = Column(String(32))
     github_oauth_token = Column(String(64), nullable=True)
     gitlab_oauth_token = Column(String(64), nullable=True)
 

@@ -38,6 +38,7 @@ def oauth_callback():
         # Verify the state parameter
         if state_store.consume(request.args["state"]):
             client = WebClient()  # no prepared token needed for this
+            
             # Complete the installation by calling oauth.v2.access API method
             oauth_response = client.oauth_v2_access(
                 client_id=authorize_url_generator.client_id,
@@ -46,7 +47,7 @@ def oauth_callback():
                 code=request.args["code"]
             )
 
-            # installed_enterprise = oauth_response.get("enterprise", {})
+            installed_enterprise = oauth_response.get("enterprise", {})
             is_enterprise_install = oauth_response.get("is_enterprise_install")
             installed_team = oauth_response.get("team", {})
             installer = oauth_response.get("authed_user", {})
@@ -55,18 +56,18 @@ def oauth_callback():
             bot_token = oauth_response.get("access_token")
             # NOTE: oauth.v2.access doesn't include bot_id in response
             bot_id = None
-            # enterprise_url = None
+            enterprise_url = None
             if bot_token is not None:
                 auth_test = client.auth_test(token=bot_token)
                 bot_id = auth_test["bot_id"]
-                # if is_enterprise_install is True:
-                #     enterprise_url = auth_test.get("url")
+                if is_enterprise_install is True:
+                    enterprise_url = auth_test.get("url")
 
             installation = Installation(
                 app_id=oauth_response.get("app_id"),
-                # enterprise_id=installed_enterprise.get("id"),
-                # enterprise_name=installed_enterprise.get("name"),
-                # enterprise_url=enterprise_url,
+                enterprise_id=installed_enterprise.get("id"),
+                enterprise_name=installed_enterprise.get("name"),
+                enterprise_url=enterprise_url,
                 team_id=installed_team.get("id"),
                 team_name=installed_team.get("name"),
                 bot_token=bot_token,

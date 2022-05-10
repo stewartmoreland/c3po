@@ -30,7 +30,7 @@ def event_api_handler():
         return Response(data['challenge'], mimetype='text/html')
 
     elif data['event']['type'] == 'app_mention':
-        installation_store = FileInstallationStore(base_dir="./data")
+        from c3po.database import installation_store
         try:
             # in the case where this app gets a request from an Enterprise Grid workspace
             enterprise_id = request.form.get("enterprise_id")
