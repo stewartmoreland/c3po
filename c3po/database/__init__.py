@@ -21,5 +21,9 @@ Base.query = db_session.query_property()
 
 def init_db():
     Base.metadata.create_all(bind=engine)
-    installation_store.metadata.create_all(bind=engine)
-    state_store.metadata.create_all(bind=engine)
+    try:
+        engine.execute("select count(*) from slack_bots")
+    except Exception as e:
+        app.logger.info(f"Initializing Slack Oauth tables: {e}")
+        installation_store.metadata.create_all(bind=engine)
+        state_store.metadata.create_all(bind=engine)
