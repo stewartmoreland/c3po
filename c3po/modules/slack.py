@@ -297,6 +297,7 @@ class SlackEventHandler(object):
         Returns:
             dict: A message body sent to the channel
         """
+        from c3po.database import db_session
         from c3po.database.model import StarWarsQuotes
 
         bot_id = self._api.get_current_bot_id()
@@ -313,7 +314,7 @@ class SlackEventHandler(object):
             if 'help' in request['event']['text']:
                 app.logger.info('Help me requested')
                 help_message = [
-                    f"@c3po quote: Get random Star Wars quotes."
+                    f"`@c3po quote`: Gets random Star Wars quotes."
                 ]
                 message['text'] = "\n".join(help_message)
             elif 'hello' in request['event']['text']:
@@ -322,8 +323,7 @@ class SlackEventHandler(object):
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
                 order_by = func.random() if app.config['db_dialect'] == 'sqlite' or app.config['db_dialect'] == 'postgresql' else func.rand()
-                quotes = StarWarsQuotes.query
-                random_quote = quotes.order_by(order_by).first()
+                random_quote = db_session.query(StarWarsQuotes).order_by(order_by).limit(1).first()
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
