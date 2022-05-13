@@ -32,11 +32,11 @@ def event_api_handler():
     elif data['event']['type'] == 'app_mention':
         from c3po.database import installation_store
         try:
-            # in the case where this app gets a request from an Enterprise Grid workspace
+            # if Enterprise Grid workspace
             enterprise_id = request.form.get("enterprise_id")
-            # The workspace's ID
-            team_id = request.form["team_id"]
-            # Lookup the stored bot token for this workspace
+            # workspace ID
+            team_id = data["team_id"]
+            # get stored bot token for this workspace
             bot = installation_store.find_bot(
                 enterprise_id=enterprise_id,
                 team_id=team_id,
