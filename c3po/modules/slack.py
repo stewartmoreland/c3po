@@ -311,14 +311,14 @@ class SlackEventHandler(object):
                 message['text'] = "\n".join(help_message)
             elif 'hello' in request['event']['text']:
                 app.logger.info('Hello requested')
-                message['text'] = f"Greetings master <@{message['event']['user']}>!"
+                message['text'] = f"Greetings master <@{request['event']['user']}>!"
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
                 random_quote = StarWarsQuotes.query.order_by(func.random()).first()
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
-                message['text'] = f"I beg your pardon, but what do you mean, “{message['event']['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
+                message['text'] = f"I beg your pardon, but what do you mean, “{request['event']['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
             
             app.logger.info(json.dumps(message))
             return message
