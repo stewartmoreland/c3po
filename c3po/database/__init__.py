@@ -19,6 +19,8 @@ state_store = SQLAlchemyOAuthStateStore(expiration_seconds=300, engine=db_sessio
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+app.config['db_dialect'] = db_session.bind.dialect.name
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     try:

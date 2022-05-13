@@ -17,6 +17,7 @@ from flask import current_app as app
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 class SlackApi(object):
     def __init__(self, token):
         """
@@ -33,10 +34,10 @@ class SlackApi(object):
         """
         members = list()
         endpoint = 'https://slack.com/api/users.list'
-        variables = urlencode({'limit':'1000'})
+        variables = urlencode({'limit': '1000'})
         variables = variables.encode('ascii')
         page_count = 1
-        
+
         while True:
             request = Request(endpoint, headers=self._headers, data=variables)
             with urlopen(request) as response:
@@ -45,9 +46,11 @@ class SlackApi(object):
             for node in nodes:
                 if node['deleted'] != True and node['is_bot'] != True:
                     members.append(node)
-            app.logger.info(f"[SlackApi] [users.list] Processed page {page_count} with {len(nodes)} user records.")
+            app.logger.info(
+                f"[SlackApi] [users.list] Processed page {page_count} with {len(nodes)} user records.")
             if data['response_metadata']['next_cursor']:
-                variables = urlencode({'cursor':data['response_metadata']['next_cursor'],'limit':'1000'})
+                variables = urlencode(
+                    {'cursor': data['response_metadata']['next_cursor'], 'limit': '1000'})
                 variables = variables.encode('ascii')
                 page_count = page_count + 1
                 sleep(3)
@@ -70,10 +73,10 @@ class SlackApi(object):
     def get_bot_info(self, bot_id):
         """
         Returns information about a bot.
-        
+
         Args:
             bot_id (str): The bot ID to get information about.
-            
+
         Returns:
             dict: A dictionary containing the bot's information.
         """
@@ -96,28 +99,28 @@ class SlackApi(object):
             dict: A dictionary containing the user's information.
         """
         endpoint = 'https://slack.com/api/users.info'
-        variables = urlencode({'user':user_id})
+        variables = urlencode({'user': user_id})
         variables = variables.encode('ascii')
         user_data = {}
 
         request = Request(endpoint, headers=self._headers, data=variables)
         with urlopen(request) as response:
             user_data = json.loads(response.read().decode('utf8'))
-        
+
         return user_data
 
     def get_conversation_info(self, user_id):
         """
         Returns the channel ID for a given user ID.
-        
+
         Args:
             user_id (str): The user ID.
-            
+
         Returns:
             str: The channel ID.
         """
         endpoint = 'https://slack.com/api/users.conversations'
-        variables = urlencode({'user':user_id,'types':'im,mpim'})
+        variables = urlencode({'user': user_id, 'types': 'im,mpim'})
         variables = variables.encode('ascii')
         convo_data = []
 
@@ -128,7 +131,8 @@ class SlackApi(object):
             nodes = data['channels']
             convo_data += nodes
             if data['response_metadata']['next_cursor']:
-                variables = urlencode({'user':user_id,'types':'im,mpim','cursor':data['response_metadata']['next_cursor']})
+                variables = urlencode(
+                    {'user': user_id, 'types': 'im,mpim', 'cursor': data['response_metadata']['next_cursor']})
                 variables = variables.encode('ascii')
             else:
                 break
@@ -138,15 +142,15 @@ class SlackApi(object):
     def get_channel_id_by_name(self, channel_name):
         """
         Returns the channel ID for a given channel name.
-        
+
         Args:
             channel_name (str): The name of the channel.
-            
+
         Returns:
             str: The channel ID.
         """
         endpoint = 'https://slack.com/api/conversations.list'
-        variables = urlencode({'types':'public_channel,private_channel'})
+        variables = urlencode({'types': 'public_channel,private_channel'})
         variables = variables.encode('ascii')
         channel_list = list()
 
@@ -157,7 +161,8 @@ class SlackApi(object):
             nodes = data['channels']
             channel_list += nodes
             if data['response_metadata']['next_cursor']:
-                variables = urlencode({'types':'public_channel,private_channel','cursor':data['response_metadata']['next_cursor']})
+                variables = urlencode(
+                    {'types': 'public_channel,private_channel', 'cursor': data['response_metadata']['next_cursor']})
                 variables = variables.encode('ascii')
             else:
                 break
@@ -166,20 +171,21 @@ class SlackApi(object):
             for channel in channel_list:
                 if channel['name'] == channel_name:
                     channel_id = channel['id']
-            
+
             return channel_id
         except KeyError as e:
-            app.logger.error(f'ERROR: {e} - Unable to find channel {channel_name}. If this is a private channel, try adding the bot user to the channel to make it visible.')
+            app.logger.error(
+                f'ERROR: {e} - Unable to find channel {channel_name}. If this is a private channel, try adding the bot user to the channel to make it visible.')
 
     def get_channel_list(self):
         """
         Returns a list of all channels the bot is in.
-        
+
         Returns:
             list: A list of channel names.
         """
         endpoint = 'https://slack.com/api/conversations.list'
-        variables = urlencode({'types':'public_channel,private_channel'})
+        variables = urlencode({'types': 'public_channel,private_channel'})
         variables = variables.encode('ascii')
         channel_list = list()
 
@@ -190,7 +196,8 @@ class SlackApi(object):
             nodes = data['channels']
             channel_list += nodes
             if data['response_metadata']['next_cursor']:
-                variables = urlencode({'types':'public_channel,private_channel','cursor':data['response_metadata']['next_cursor']})
+                variables = urlencode(
+                    {'types': 'public_channel,private_channel', 'cursor': data['response_metadata']['next_cursor']})
                 variables = variables.encode('ascii')
             else:
                 break
@@ -200,15 +207,15 @@ class SlackApi(object):
     def open_direct_message(self, user_ids):
         """
         Opens a direct message channel with the specified user(s).
-        
+
         Args:
             user_ids (list): A list of user IDs to open a direct message channel with.
-            
+
         Returns:
             channel_id (str): The channel ID of the newly opened direct message channel.
         """
         endpoint = 'https://slack.com/api/conversations.open'
-        variables = urlencode({'users':user_ids})
+        variables = urlencode({'users': user_ids})
         variables = variables.encode('ascii')
 
         request = Request(endpoint, headers=self._headers, data=variables)
@@ -216,19 +223,19 @@ class SlackApi(object):
             data = json.loads(response.read().decode('utf8'))
 
         app.logger.info("Channel Data: " + json.dumps(data))
-        
+
         channel_id = data['channel']['id']
 
         return channel_id
-    
+
     def add_reaction(self, message, reaction='taco'):
         """
         Adds a reaction to a message.
-        
+
         Args:
             message (str): The message to react to.
             reaction (str): The reaction to add.
-            
+
         Returns:
             bool: True if successful, False otherwise.
         """
@@ -245,23 +252,24 @@ class SlackApi(object):
             data = json.loads(response.read().decode('utf8'))
 
         return data
-    
+
     def send_message(self, message):
         """
         Send a message to a channel or direct message
-        
+
         Args:
             message (dict): A message object
         """
         endpoint = 'https://slack.com/api/chat.postMessage'
         variables = urlencode(message)
         variables = variables.encode('ascii')
-        
+
         request = Request(endpoint, headers=self._headers, data=variables)
         with urlopen(request) as response:
             data = json.loads(response.read().decode('utf8'))
-            
+
         return data
+
 
 class SlackEventHandler(object):
     def __init__(self, token):
@@ -270,10 +278,10 @@ class SlackEventHandler(object):
     def send_message(self, message):
         """
         Send a message to a channel
-        
+
         Args:
             message (dict): A message to send to a channel
-            
+
         Returns:
             dict: The response from the Slack API
         """
@@ -290,14 +298,15 @@ class SlackEventHandler(object):
             dict: A message body sent to the channel
         """
         from c3po.database.model import StarWarsQuotes
-        
+
         bot_id = self._api.get_current_bot_id()
         if bot_id['ok'] == False:
-            app.logger.error(f'ERROR: {bot_id["error"]} - Unable to get bot ID.')
+            app.logger.error(
+                f'ERROR: {bot_id["error"]} - Unable to get bot ID.')
             return
         else:
             app.logger.debug(f"Bot ID: {bot_id}")
-        
+
         bot_info = self._api.get_bot_info(bot_id=bot_id['bot_id'])
         app.logger.debug(json.dumps(f"Bot Info: {bot_info}"))
         message = {"channel": request['event']['channel']}
@@ -314,19 +323,20 @@ class SlackEventHandler(object):
                 message['text'] = f"Greetings master <@{request['event']['user']}>!"
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
-                random_quote = StarWarsQuotes.query.order_by(func.random()).first()
+                order_by = func.random() if app.config['db_dialect'] == 'sqlite' else func.rand()
+                random_quote = StarWarsQuotes.query.order_by(order_by).first()
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
                 message['text'] = f"I beg your pardon, but what do you mean, “{request['event']['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
-            
+
             app.logger.info(json.dumps(message))
             return message
 
         except Exception as e:
-            app.logger.debug(f"Received message from user id {request['event']['user']}")
+            app.logger.debug(
+                f"Received message from user id {request['event']['user']}")
             app.logger.error(f"Unable to parse message: {e}")
 
             message['text'] = "R2! We're doomed! (Something went wrong. Please try again.)"
             return message
-
