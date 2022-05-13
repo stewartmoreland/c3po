@@ -328,7 +328,7 @@ class SlackEventHandler(object):
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
-                message['text'] = f"I beg your pardon, but what do you mean, “{request['event']['text']}?”\n\nFor help, type `@c3po help`"
+                message['text'] = f"I beg your pardon, but what do you mean, `{request['event']['text']}`?\n\nFor help, type `@c3po help`"
 
             app.logger.info(json.dumps(message))
             return message
