@@ -56,9 +56,9 @@ class SlackApi(object):
 
         return members
 
-    def get_current_bot_info(self):
+    def get_current_bot_id(self):
         """
-        Returns the bot's information.
+        Returns the current bot ID.
         """
         endpoint = 'https://slack.com/api/auth.test'
         self._headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -291,8 +291,8 @@ class SlackEventHandler(object):
         """
         from c3po.database.model import StarWarsQuotes
         
-        bot_id = self._api.getCurrentBotInfo()
-        bot_info = self._api.getBotInfo(bot_id=bot_id['bot_id'])
+        bot_id = self._api.get_current_bot_id()
+        bot_info = self._api.get_bot_info(bot_id=bot_id['bot_id'])
         app.logger.debug(json.dumps(bot_info))
         message = {"channel": request['event']['channel']}
 
@@ -300,7 +300,7 @@ class SlackEventHandler(object):
             if 'help' in request['event']['text']:
                 app.logger.info('Help me requested')
                 help_message = [
-                    f"@{bot_info['name']} quote: Get random Star Wars quotes."
+                    f"@{bot_info['bot']['name']} quote: Get random Star Wars quotes."
                 ]
                 message['text'] = "\n".join(help_message)
             elif 'hello' in request['event']['text']:
