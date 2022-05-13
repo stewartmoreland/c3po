@@ -323,7 +323,7 @@ class SlackEventHandler(object):
                 message['text'] = f"Greetings master <@{request['event']['user']}>!"
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
-                order_by = func.random() if app.config['db_dialect'] == 'sqlite' else func.rand()
+                order_by = func.random() if app.config['db_dialect'] == 'sqlite' or app.config['db_dialect'] == 'postgresql' else func.rand()
                 random_quote = StarWarsQuotes.query.order_by(order_by).first()
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
