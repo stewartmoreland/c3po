@@ -13,8 +13,6 @@ from sqlalchemy.sql.expression import func
 
 from flask import current_app as app
 
-from c3po.database.model import StarWarsQuotes
-
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -291,6 +289,8 @@ class SlackEventHandler(object):
         Returns:
             dict: A message body sent to the channel
         """
+        from c3po.database.model import StarWarsQuotes
+        
         bot_id = self._api.getCurrentBotInfo()
         bot_info = self._api.getBotInfo(bot_id=bot_id['bot_id'])
         app.logger.debug(json.dumps(bot_info))
@@ -312,7 +312,7 @@ class SlackEventHandler(object):
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
-                message['text'] = f"I beg your pardon, but what do you mean, “{message['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
+                message['text'] = f"I beg your pardon, but what do you mean, “{message['event']['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
             
             app.logger.info(json.dumps(message))
             return message
