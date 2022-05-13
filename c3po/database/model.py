@@ -4,7 +4,7 @@ from c3po.database import Base
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'c3po_users'
 
     id = Column(String(16), primary_key=True)
     user_name = Column(String(64))
