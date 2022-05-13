@@ -22,10 +22,12 @@ Base.query = db_session.query_property()
 app.config['db_dialect'] = db_session.bind.dialect.name
 
 def init_db():
+    import c3po.database.model
     Base.metadata.create_all(bind=engine)
     try:
         engine.execute("select count(*) from slack_bots")
     except Exception as e:
         app.logger.info(f"Initializing Slack Oauth tables: {e}")
+        
         installation_store.metadata.create_all(bind=engine)
         state_store.metadata.create_all(bind=engine)
