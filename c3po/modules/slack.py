@@ -307,15 +307,13 @@ class SlackEventHandler(object):
         else:
             app.logger.debug(f"Bot ID: {bot_id}")
 
-        bot_info = self._api.get_bot_info(bot_id=bot_id['bot_id'])
-        app.logger.debug(json.dumps(f"Bot Info: {bot_info}"))
         message = {"channel": request['event']['channel']}
 
         try:
             if 'help' in request['event']['text']:
                 app.logger.info('Help me requested')
                 help_message = [
-                    f"@{bot_info['bot']['name']} quote: Get random Star Wars quotes."
+                    f"@c3po quote: Get random Star Wars quotes."
                 ]
                 message['text'] = "\n".join(help_message)
             elif 'hello' in request['event']['text']:
@@ -329,7 +327,7 @@ class SlackEventHandler(object):
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
-                message['text'] = f"I beg your pardon, but what do you mean, “{request['event']['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
+                message['text'] = f"I beg your pardon, but what do you mean, “{request['event']['text']}?”\n\nFor help, type `@c3po help`"
 
             app.logger.info(json.dumps(message))
             return message
