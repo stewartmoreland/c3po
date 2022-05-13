@@ -292,8 +292,9 @@ class SlackEventHandler(object):
         from c3po.database.model import StarWarsQuotes
         
         bot_id = self._api.get_current_bot_id()
+        app.logger.debug(f"Bot ID: {bot_id}")
         bot_info = self._api.get_bot_info(bot_id=bot_id['bot_id'])
-        app.logger.debug(json.dumps(bot_info))
+        app.logger.debug(json.dumps(f"Bot Info: {bot_info}"))
         message = {"channel": request['event']['channel']}
 
         try:
