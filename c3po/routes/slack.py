@@ -35,7 +35,7 @@ def event_api_handler():
             # in the case where this app gets a request from an Enterprise Grid workspace
             enterprise_id = request.form.get("enterprise_id")
             # The workspace's ID
-            team_id = request.form.get["team_id"]
+            team_id = request.form["team_id"]
             # Lookup the stored bot token for this workspace
             bot = installation_store.find_bot(
                 enterprise_id=enterprise_id,

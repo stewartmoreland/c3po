@@ -10,9 +10,9 @@ from c3po.modules.slack import SlackApi
 v1_slack_messenger = Blueprint('v1_slack_messager', __name__, url_prefix='/v1/slack/messenger')
 
 @v1_slack_messenger.route('/send', methods=['POST'])
-def send_message():
+def send_message_api():
     from c3po.database import installation_store
-    
+
     data = request.json
     app.logger.debug("Request payload: " + json.dumps(data))
 
@@ -20,7 +20,7 @@ def send_message():
         # in the case where this app gets a request from an Enterprise Grid workspace
         enterprise_id = request.form.get("enterprise_id")
         # The workspace's ID
-        team_id = request.form.get["team_id"]
+        team_id = request.form["team_id"]
         # Lookup the stored bot token for this workspace
         bot = installation_store.find_bot(
             enterprise_id=enterprise_id,

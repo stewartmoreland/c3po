@@ -23,6 +23,9 @@ v1_slack_oauth = Blueprint("v1_slack_oauth", __name__,
 
 @v1_slack_oauth.route("/authorize", methods=["GET"])
 def authorize():
+    """
+    Redirect the user to the Slack OAuth flow.
+    """
     from c3po.database import state_store
     state = state_store.issue()
     return redirect(authorize_url_generator.generate(state))
@@ -30,6 +33,9 @@ def authorize():
 
 @v1_slack_oauth.route("/callback", methods=["GET"])
 def oauth_callback():
+    """
+    Exchange the OAuth code for an OAuth token.
+    """
     from c3po.database import state_store, installation_store
 
     client_secret = app.config["SLACK_CLIENT_SECRET"]
@@ -38,7 +44,7 @@ def oauth_callback():
         # Verify the state parameter
         if state_store.consume(request.args["state"]):
             client = WebClient()  # no prepared token needed for this
-            
+
             # Complete the installation by calling oauth.v2.access API method
             oauth_response = client.oauth_v2_access(
                 client_id=authorize_url_generator.client_id,
