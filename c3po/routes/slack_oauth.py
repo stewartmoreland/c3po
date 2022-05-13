@@ -39,11 +39,9 @@ def oauth_callback():
     from c3po.database import state_store, installation_store
 
     client_secret = app.config["SLACK_CLIENT_SECRET"]
-    # Retrieve the auth code and state from the request params
     if "code" in request.args:
-        # Verify the state parameter
         if state_store.consume(request.args["state"]):
-            client = WebClient()  # no prepared token needed for this
+            client = WebClient()
 
             # Complete the installation by calling oauth.v2.access API method
             oauth_response = client.oauth_v2_access(
@@ -59,31 +57,36 @@ def oauth_callback():
             installer = oauth_response.get("authed_user", {})
             incoming_webhook = oauth_response.get("incoming_webhook", {})
 
-            bot_token = oauth_response.get("access_token")
             # NOTE: oauth.v2.access doesn't include bot_id in response
+            bot_token = oauth_response.get("access_token")
             bot_id = None
+
+            enterprise_id = None
+            enterprise_name = None
             enterprise_url = None
             if bot_token is not None:
                 auth_test = client.auth_test(token=bot_token)
                 bot_id = auth_test["bot_id"]
                 if is_enterprise_install is True:
+                    enterprise_id = installed_enterprise.get("id")
+                    enterprise_name = installed_enterprise.get("name")
                     enterprise_url = auth_test.get("url")
+
 
             installation = Installation(
                 app_id=oauth_response.get("app_id"),
-                enterprise_id=installed_enterprise.get("id"),
-                enterprise_name=installed_enterprise.get("name"),
+                enterprise_id=enterprise_id,
+                enterprise_name=enterprise_name,
                 enterprise_url=enterprise_url,
                 team_id=installed_team.get("id"),
                 team_name=installed_team.get("name"),
                 bot_token=bot_token,
                 bot_id=bot_id,
                 bot_user_id=oauth_response.get("bot_user_id"),
-                bot_scopes=oauth_response.get(
-                    "scope"),  # comma-separated string
+                bot_scopes=oauth_response.get("scope"),
                 user_id=installer.get("id"),
                 user_token=installer.get("access_token"),
-                user_scopes=installer.get("scope"),  # comma-separated string
+                user_scopes=installer.get("scope"),
                 incoming_webhook_url=incoming_webhook.get("url"),
                 incoming_webhook_channel=incoming_webhook.get("channel"),
                 incoming_webhook_channel_id=incoming_webhook.get("channel_id"),
