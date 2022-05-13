@@ -9,7 +9,7 @@ from datetime import datetime
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 from urllib.error import URLError, HTTPError
-from functools import random
+from sqlalchemy.sql.expression import func
 
 from flask import current_app as app
 
@@ -308,7 +308,7 @@ class SlackEventHandler(object):
                 message['text'] = f"Greetings master <@{message['event']['user']}>!"
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
-                random_quote = StarWarsQuotes.query.order_by(random()).first()
+                random_quote = StarWarsQuotes.query.order_by(func.random()).first()
                 message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
