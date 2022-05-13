@@ -9,10 +9,11 @@ from datetime import datetime
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 from urllib.error import URLError, HTTPError
+from functools import random
 
 from flask import current_app as app
 
-from c3po.modules.quotes import get_star_wars_quote
+from c3po.database.model import StarWarsQuotes
 
 
 logger = logging.getLogger()
@@ -267,7 +268,6 @@ class SlackApi(object):
 class SlackEventHandler(object):
     def __init__(self, token):
         self._api = SlackApi(token)
-        self.quotes = get_star_wars_quote()
 
     def send_message(self, message):
         """
@@ -303,12 +303,16 @@ class SlackEventHandler(object):
                     f"@{bot_info['name']} quote: Get random Star Wars quotes."
                 ]
                 message['text'] = "\n".join(help_message)
+            elif 'hello' in request['event']['text']:
+                app.logger.info('Hello requested')
+                message['text'] = f"Greetings master <@{message['event']['user']}>!"
             elif 'quote' in request['event']['text']:
                 app.logger.info('Quotes requested')
-                message['text'] = f"> {self.quotes['content']}"
+                random_quote = StarWarsQuotes.query.order_by(random()).first()
+                message['text'] = f"> {random_quote['quote']} - {random_quote['character']}"
 
             else:
-                message['text'] = f"Good heavens. I didn't understand what you said.\n\nFor help, type `@{bot_info['bot']['name']} help`"
+                message['text'] = f"I beg your pardon, but what do you mean, “{message['text']}?”\n\nFor help, type `@{bot_info['bot']['name']} help`"
             
             app.logger.info(json.dumps(message))
             return message

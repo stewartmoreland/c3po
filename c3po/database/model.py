@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-import email
 from sqlalchemy import Column, Integer, String, ForeignKey
 from c3po.database import Base
 
@@ -11,6 +10,7 @@ class User(Base):
     user_name = Column(String(64))
     full_name = Column(String(64), nullable=True)
     email = Column(String(64), nullable=True)
+    team_id = Column(String(64))
     slack_user_id = Column(String(16), nullable=True)
     slack_subscription = Column(String(32))
     github_oauth_token = Column(String(64), nullable=True)
@@ -26,3 +26,27 @@ class User(Base):
 
     def __repr__(self):
         return self
+
+
+class StarWarsQuotes(Base):
+    __tablename__ = 'starwarsquotes'
+
+    id = Column(Integer, primary_key=True)
+    quote = Column(String(256))
+    character = Column(String(64))
+    movie = Column(String(64))
+
+    def __init__(self, quote=None, character=None, movie=None):
+        self.quote = quote
+        self.character = character
+        self.movie = movie
+
+    def __repr__(self):
+        return self
+    
+    def _to_dict(self):
+        return {
+            'quote': self.quote,
+            'character': self.character,
+            'movie': self.movie
+        }
