@@ -1,0 +1,3 @@
+include versioneer.py
+include c3po/version.py
+include c3po/_version.py
