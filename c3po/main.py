@@ -5,8 +5,8 @@ from c3po.flaskr import create_app
 from c3po.conf import config
 
 def main():
-    environment_name = os.environ.get('ENVIRONMENT', 'default')
-    config_object = config[environment_name]
+    environment = os.environ.get('ENVIRONMENT', 'default')
+    config_object = config[environment]
     app = create_app(config_object)
 
     return app
