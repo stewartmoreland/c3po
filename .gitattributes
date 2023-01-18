@@ -1,0 +1,2 @@
+c3po/version.py export-subst
+c3po/_version.py export-subst
