@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from enum import unique
 from sqlalchemy import Column, Integer, String, ForeignKey
 from c3po.database import Base
 
@@ -50,3 +51,25 @@ class StarWarsQuotes(Base):
             'character': self.character,
             'movie': self.movie
         }
+
+class GitLabProject(Base):
+    __tablename__ = 'gitlab_project'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(128), unique=True)
+    description = Column(String(2048))
+    readme = Column(String)
+    primary_lang = Column(String(64))
+    primary_lang_version = Column(String(64))
+    dependency_list = Column(String(2048))
+
+    def __init__(self, name=None, description=None, readme=None, primary_lang=None, primary_lang_version=None, dependency_list=None):
+        self.name = name
+        self.description = description
+        self.readme = readme
+        self.primary_lang = primary_lang
+        self.primary_lang_version = primary_lang_version
+        self.dependency_list = dependency_list
+
+    def __repr__(self):
+        return self
